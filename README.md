@@ -25,9 +25,9 @@
 
 	D-Evidence in your code that:
 
-    		-- Compile errors have been fixed.
-                -- Unit tests have been fixed.
-    		-- All critical security vulnerabilities caught by the “Analyze” job have been fixed.
+    		-- Compile errors have been fixed.		attached		
+                -- Unit tests have been fixed.			attached
+    		-- All critical security vulnerabilities caught by the “Analyze” job have been fixed.					attached
 
 ############################################################
 Utilize a configuration management tool to accomplish deployment to cloud-based servers. 
