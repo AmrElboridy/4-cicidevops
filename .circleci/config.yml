@@ -82,8 +82,7 @@ jobs:
                 npm install
                 npm audit fix --audit-level=critical --force
                 #npm install oauth-sign@^0.9.0
-                npm audit --audit-level=critical
-      
+                npm audit --audit-level=critical  
   scan-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -101,7 +100,6 @@ jobs:
                 npm audit fix --audit-level=critical --force
                 npm audit --audit-level=critical
 
-####################################
   deploy-infrastructure:
     docker:
       - image: amazon/aws-cli
@@ -114,18 +112,17 @@ jobs:
           command: |
                  aws cloudformation deploy \
                  --template-file /root/4-cicidevops/4-cicidevops/.circleci/files/backend.yml \
-                 --tags project=your-tag \            
+                 --tags project=udapeople \            
                  --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
                  --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" 
-                 --tags project=udapeople           
       - run:            
           name: Ensure front-end infrastructure exist     
           command: |  
                 aws cloudformation deploy \  
-                --template-file /root/4-cicidevops/4-cicidevops/.circleci/files/frontend.yml \                --tags project=your-tag \
+                --template-file /root/4-cicidevops/4-cicidevops/.circleci/files/frontend.yml \               
+                --tags project=udapeople \
                 --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
-                --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"     \
-                --tags project=udapeople        
+                --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"     
       - run: 
           name: Add back-end ip to ansible inventory
           command: |  
