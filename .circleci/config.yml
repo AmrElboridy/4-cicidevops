@@ -66,6 +66,7 @@ jobs:
           name: test-backend
           command: |
              cd backend
+             npm install jshint gulp-jshint --save-dev
              npm install
              npm run test  
   scan-frontend:
