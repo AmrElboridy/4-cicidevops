@@ -3,6 +3,20 @@ version: 2.1
 orbs: 
   slack: circleci/slack@4.9.3 
 
+commands:
+  destroy-environment:
+    description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
+    parameters:
+      workflow_id:
+        type: "string"
+    steps:
+      - run:
+          name: Destroy environments
+          when: on_fail
+          command: |
+            aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.workflow_id >>
+            aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.workflow_id >>
+            aws s3 rb s3://udapeople-<< parameters.workflow_id >> --force
 jobs:
   build-frontend:
     docker:
@@ -105,16 +119,14 @@ jobs:
                 #npm install oauth-sign@^0.9.0
                 npm audit fix --audit-level=critical --force
                 npm audit --audit-level=critical
-
+###############################################################
   deploy-infrastructure:
     docker:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - restore_cache:
-          keys: [infrastructure-deploy]
       - run:
-          name: Ensure back-end infrastructure exists
+          name: Ensure back-end infrastructure exists and install tar gzip
           command: |
                  yum -y install tar gzip
                  aws cloudformation deploy \
@@ -136,7 +148,7 @@ jobs:
           command: |  
                 aws ec2 describe-instances \
                 --query 'Reservations[*].Instances[*].PublicIpAddress' \
-                --output text >> inventory.txt
+                --output text >> .circleci/ansible/inventory.txt
       - persist_to_workspace:
                  root: /root/
                  paths:
