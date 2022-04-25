@@ -150,9 +150,10 @@ jobs:
                 --query 'Reservations[*].Instances[*].PublicIpAddress' \
                 --output text >> .circleci/ansible/inventory.txt
       - persist_to_workspace:
-                 root: /root/
+                 root: ~/
                  paths:
-                    - 4-cicidevops/4-cicidevops/.circleci/ansible/inventory.txt
+                    - .circleci/ansible/inventory.txt
+                    - backend/
       # Here's where you will add some code to rollback on failure 
 workflows:
   default:
