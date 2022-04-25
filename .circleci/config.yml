@@ -174,7 +174,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update tar gzip ansible nodejs npm curl pm2
+            apk add --update tar gzip ansible nodejs npm curl 
             pip install awscli
       - run:
           name: Check there is .env file at workspace.
@@ -185,8 +185,6 @@ jobs:
           command: |
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
-      - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:4}
       # Here's where you will add some code to rollback on failure 
 workflows:
   default:
