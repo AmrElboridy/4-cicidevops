@@ -69,7 +69,7 @@ jobs:
              cd frontend
              npm cache clean --force
              npm install
-             npm audix fix
+             npm audit fix
              npm run test  
 
   test-backend:
