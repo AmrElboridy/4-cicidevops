@@ -10,7 +10,7 @@ Resources:
   WebsiteBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: mramrbucket
+      BucketName: mrss3amrbueckrrrrret
       AccessControl: PublicRead
       WebsiteConfiguration:
         IndexDocument: index.html
