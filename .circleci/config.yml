@@ -177,9 +177,6 @@ jobs:
             apk add --update tar gzip ansible nodejs npm curl 
             pip install awscli
       - run:
-          name: Check there is .env file at workspace.
-          command: cat backend/.env
-      - run:
           name: Configure server with ansible
           no_output_timeout: 30m
           command: |
