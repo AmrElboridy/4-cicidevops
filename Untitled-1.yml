@@ -74,3 +74,8 @@
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:4}
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:4}   
+          ---------------------------------\
+          ### npm install
+      #   npm audit fix --force
+              #   npm run migrations > migrations_dump.txt
+                         # cat migrations-${CIRCLE_WORKFLOW_ID}.txt
