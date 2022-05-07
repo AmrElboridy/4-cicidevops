@@ -14,7 +14,7 @@
 			https://github.com/AmrElboridy/4-cicidevops.git
 
 	B- Evidence of code-based CI/CD configuration in the form of yaml files in your git repository.
-			Check the Above Url Please
+			https://github.com/AmrElboridy/4-cicidevops.git
 
 	C-Console output of various pre-deploy job failure scenarios:
 
