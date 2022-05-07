@@ -204,6 +204,7 @@ jobs:
           command: |
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
+##############################################################################################
   run-migrations:
     docker:
       - image: circleci/node:13.8.0
@@ -227,84 +228,8 @@ jobs:
                  then
                  curl https://kvdb.io/9GE4jRtKznmVKRfvdBABBe/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
                  fi
-###################################################################
+##############################################################################################
 
-  deploy-frontend:
-    docker:
-      - image: amazon/aws-cli
-  ## Docker image here that supports AWS CLI
-    steps:
-      ## Checkout code from git
-      - checkout
-      - attach_workspace:
-          at: ~/project
-      - run:
-          name: Install dependencies
-          command: |
-                apk add --update tar gzip ansible nodejs npm curl
-                pip install awscli
-      - run:
-          name: Get backend url
-          command: |
-            export API_URL="http://${BACKEND_IP}:3030"
-            echo "${API_URL}"
-            echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
-            cat frontend/.env
-      - run:
-          name: Deploy frontend objects
-          command: |
-            cd frontend
-            npm install
-            npm run build
-            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
-            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-      - revert-migrations:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:4}
-      - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:4}      
-  deploy-backend:
-    docker:
-      - image: python:3.7-alpine3.11
-    steps:
-      - checkout
-      ## Add ssh keys with fingerprint
-      - add_ssh_keys:
-          fingerprints: ["c1:1b:1e:dd:44:17:94:4a:ed:09:b7:e9:4a:e5:76:12"]
-      ## attach workspace
-      - attach_workspace:
-          at: ~/project
-      - run:
-      #    name: Install dependencies
-      - restore_cache:
-          keys: [backend-build]
-      - run:
-          name: Install dependencies
-          command: |
-            apk add --update tar gzip ansible nodejs npm 
-      - run:
-          name: Deploy backend
-          no_output_timeout: 30m
-          command: |
-            cd backend
-            npm i
-            npm run build
-            cd ..
-            tar -C backend -czvf artifact.tar.gz .
-            cd .circleci/ansible
-            echo "To echo the Contents  of the inventory.txt file"
-            cat inventory.txt
-            ansible-playbook -i inventory.txt deploy-backend.yml
-      - run:
-          name: Deploy backend
-          no_output_timeout: 30m
-          command: |
-            npm install
-            pm2 stop default
-            pm2 start npm -- start
-      - revert-migrations:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:4}
-      - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:4}   
 workflows:
   default:
     jobs:
@@ -324,7 +249,7 @@ workflows:
           requires: [deploy-infrastructure]
       - run-migrations:
           requires: [configure_infrastructure]
-      - deploy-frontend:
-          requires: [run-migrations]
-      - deploy-backend:
-          requires: [run-migrations]
+    #  - deploy-frontend:
+       #   requires: [run-migrations]
+   #   - deploy-backend:
+     #     requires: [run-migrations]
