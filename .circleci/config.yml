@@ -226,11 +226,14 @@ jobs:
 ##############################################################################################
   deploy-frontend:
     docker:
-      - image: cimg/base:stable
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
-      - install_awscli
-      - install_nodejs
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update tar gzip ansible nodejs npm curl
+            pip install awscli
       - restore_cache:
           keys: [frontend-deps]
       - run:
