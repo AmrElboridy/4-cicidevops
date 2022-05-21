@@ -262,27 +262,31 @@ jobs:
       - image: python:3.7-alpine3.11
     steps:
       - checkout
+      - add_ssh_keys:
+          fingerprints: ["8a:3b:84:ca:03:5b:26:06:08:0b:f0:aa:cb:2a:fd:dc"]
+      - attach_workspace:
+          at: ~/   
       - run:
           name: Install dependencies
           command: |
             apk add --update tar gzip ansible nodejs npm curl openssh-client
-            pip install awscli
-            cd backend
+            pip3 install awscli
             npm install
-      - add_ssh_keys:
-          fingerprints: ["8a:3b:84:ca:03:5b:26:06:08:0b:f0:aa:cb:2a:fd:dc"]
-      - restore_cache:
-          keys: [backend-deps]   
-       # attach workspace
-      - attach_workspace:
-          at: ~/project
+       # attach workspace 
       - run:
           name: Deploy backend
           no_output_timeout: 30m
           command: |
-            pwd            
+            cd backend
+            npm i
+            npm run build
+            cd ..            
             tar -C backend -czvf backend_artifact.tar.gz .
+            mv backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
             cd .circleci/ansible
+            echo "Contents  of the inventory.txt file is -------"
+            cat inventory.txt
+            export ANSIBLE_HOST_KEY_CHECKING=FALSE
             ansible-playbook -i inventory.txt deploy-backend.yml
     #  - destroy-environment
    #   - revert-migrations
