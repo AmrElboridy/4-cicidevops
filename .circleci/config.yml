@@ -256,6 +256,48 @@ jobs:
             aws s3 cp dist s3://mrss3amrbueckrrrrret --recursive
       #- destroy-environment
       #- revert-migrations
+      #################################################################
+  deploy-backend:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update tar gzip ansible nodejs npm curl openssh-client
+            pip install awscli
+      - add_ssh_keys:
+          fingerprints: ["8a:3b:84:ca:03:5b:26:06:08:0b:f0:aa:cb:2a:fd:dc"]
+      - attach_workspace:
+          at: ~/
+      - restore_cache:
+          keys: [backend-deps]
+      - run:
+          name: Install dependencies
+          command: |
+            cd backend
+            npm install
+      - run:
+          name: Package Backend
+          command: |
+            cd backend
+            npm run build
+            tar -czf artifact.tar.gz dist/* package*
+            cd ..
+            cp backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
+      - run:
+          name: Deploy backend
+          command: |
+            export TYPEORM_MIGRATIONS_DIR=./migrations
+            export TYPEORM_ENTITIES=./modules/domain/**/*.entity{.ts,.js}
+            export TYPEORM_MIGRATIONS=./migrations/*.ts
+            cd .circleci/ansible
+            cat inventory.txt
+            ansible-playbook -i inventory.txt deploy-backend.yml
+    #  - destroy-environment
+   #   - revert-migrations
+
 workflows:
   default:
     jobs:
