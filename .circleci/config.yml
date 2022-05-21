@@ -173,7 +173,7 @@ jobs:
                  paths:
                     - .circleci/ansible/inventory.txt
                     - backend/
-      - destroy-environment
+     # - destroy-environment
 
   configure_infrastructure:
     docker:  
@@ -255,11 +255,12 @@ jobs:
           command: |
             cd frontend
             npm update
+            npm audit fix
             npm run build
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-      - destroy-environment
-      - revert-migrations
+      #- destroy-environment
+      #- revert-migrations
 workflows:
   default:
     jobs:
