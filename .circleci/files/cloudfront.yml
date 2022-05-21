@@ -1,5 +1,5 @@
 Description: >
-  Cloudfront distribution for UdaPeople.
+  Amr prepared Cloudfront distribution for UdaPeople.
 
 Parameters:
   WorkflowID:
