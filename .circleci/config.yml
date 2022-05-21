@@ -234,13 +234,10 @@ jobs:
           command: |
             apk add --update tar gzip ansible nodejs npm curl
             pip install awscli
-      - restore_cache:
-          keys: [frontend-deps]
-      - run:
-          name: Install dependencies
-          command: |
             cd frontend
             npm install
+      - restore_cache:
+          keys: [frontend-deps]
       - run:
           name: Get backend url
           command: |
@@ -254,8 +251,6 @@ jobs:
           name: Deploy frontend objects
           command: |
             cd frontend
-            npm update
-            npm audit fix
             npm run build
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
             aws s3 cp dist s3://mrss3amrbueckrrrrret --recursive
