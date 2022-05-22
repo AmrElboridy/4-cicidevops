@@ -1,28 +1,26 @@
 ---
-- name: backend  directory is created
+- name: create the backend directory
   file:
-    path: ~/backend-app
+    path: ~/backend
     state: directory
+    mode: 0755
 
-- name: Unarchive backend files
-  unarchive:
-    src: artifact.tar.gz
-    dest: ~/backend-app
+- name: get extracted artifact into backend
+  unarchive: 
+    src: ~/project/artifact.tar.gz
+    dest: ~/backend  
+    mode: 0755
+    owner: ubuntu
+    group: ubuntu
 
-- name: Installing Node Dependencies
+
+- name: execute node
   shell: |
-    cd ~/backend-app
-    npm i
-- name: "Executing Node app with PM2"
-  shell: |
-    cd ~/backend-app/dist
-    pm2 stop default
-    pm2 start main.js
-  register: execute_node
-
-- debug: "{{ execute_node.stdout_lines }}"
-
-- name: "Configure pm2 to start as service"
-  become: true
-  shell: |
-    env PATH=$PATH:/usr/local/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu
+    cd backend
+    curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+    sudo apt install -y nodejs
+    sudo npm install -g npm@latest
+    sudo npm install -g webpack-dev-server
+    sudo npm install
+    sudo npm run build
+    sudo pm2 start npm --name backend -- start
