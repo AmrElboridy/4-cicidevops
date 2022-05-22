@@ -1,30 +1,26 @@
 ---
-    - name: "Creates backend app directory"
-      ansible.builtin.file:
-        path: ~/backend-app
-        state: directory
 
-    - name: "Unarchive backend files"
-      unarchive:
-        src: artifact.tar.gz
-        dest: ~/backend-app
-
-    - name: "Installing Node Dependencies"
-      shell: |
-        cd ~/backend-app
-        npm i
-    - name: "Executing Node app with PM2"
-      shell: |
-        cd ~/backend-app/dist
-        pm2 stop default
-        pm2 start main.js
-      register: execute_node
-
-    - name: print message
-      debug:
-        msg: "{{ execute_node.stdout_lines }}"
-
-    - name: "Configure pm2 to start as service"
-      become: true
-      shell: |
-        env PATH=$PATH:/usr/local/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu
+- name: "configuration play." 
+  hosts: all
+  user: ubuntu
+  become: true
+  gather_facts: false
+  vars:
+    - ansible_python_interpreter: /usr/bin/python3
+    - ansible_host_key_checking: false
+    - ansible_stdout_callback: yaml
+  
+  # Get the environment variables from CircleCI and add to the EC2 instance
+  environment:
+    - TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION')}}"
+    - TYPEORM_ENTITIES: "{{ lookup('env', 'TYPEORM_ENTITIES')}}"
+    - TYPEORM_HOST: "{{ lookup('env', 'TYPEORM_HOST')}}"
+    - TYPEORM_PORT: 5432
+    - TYPEORM_USERNAME: "{{ lookup('env', 'TYPEORM_USERNAME')}}"
+    - TYPEORM_PASSWORD: "{{ lookup('env', 'TYPEORM_PASSWORD')}}"
+    - TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE')}}"
+    - TYPEORM_MIGRATIONS: "{{ lookup('env', 'TYPEORM_MIGRATIONS')}}"
+    - TYPEORM_MIGRATIONS_DIR: "{{ lookup('env', 'TYPEORM_MIGRATIONS_DIR')}}"
+  
+  roles:
+    - deploy
