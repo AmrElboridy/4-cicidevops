@@ -79,3 +79,22 @@
       #   npm audit fix --force
               #   npm run migrations > migrations_dump.txt
                          # cat migrations-${CIRCLE_WORKFLOW_ID}.txt
+
+        cd backend
+                npm install
+                npm audit fix  --force
+                npm run migrations > migrations_dump.txt
+
+    ## cd backend && npm run migrations | tee migrations-${CIRCLE_WORKFLOW_ID}.txt
+-----------------------------------------------------------
+     environment:
+          NODE_ENV: "local"
+          VERSION: "1"
+          ENVIRNOMENT: "production"
+          TYPEORM_CONNECTION:
+          TYPEORM_HOST
+          TYPEORM_USERNAME
+          TYPEORM_PASSWORD
+          TYPEORM_DATABASE
+          TYPEORM_PORT
+          TYPEORM_ENTITIES

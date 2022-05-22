@@ -44,7 +44,9 @@ Utilize a configuration management tool to accomplish deployment to cloud-based 
 
 	F- Evidence that deploy jobs only happen on master branch. [SCREENSHOT10]
 
-	G- Evidence of deployed and functioning front-end application in an S3 bucket [URL02] and in CloudFront. [URL03]
+	G- Evidence of deployed and functioning front-end application in an S3 bucket [URL02] 
+	https://s3.console.aws.amazon.com/s3/buckets/mrss3amrbueckrrrrret?region=us-east-1&tab=objects
+	and in CloudFront. [URL03]
 
 	H- Evidence of healthy back-end application. [URL04]
 
