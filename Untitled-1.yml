@@ -98,3 +98,42 @@
           TYPEORM_DATABASE
           TYPEORM_PORT
           TYPEORM_ENTITIES
+-----------------------------it was working----
+     - run:
+          name: Install dependencies  
+          command: |
+            sudo apt update
+            sudo apt install tar gzip unzip
+            sudo apt install nodejs npm
+            sudo apt install ansible
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+      - run:
+          name: create backend .env
+          command: |
+            touch backend/.env
+            echo TYPEORM_CONNECTION=postgres >> backend/.env
+            echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> backend/.env
+            echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> backend/.env
+            echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> backend/.env
+            echo TYPEORM_HOST=$TYPEORM_HOST >> backend/.env
+            echo TYPEORM_PORT=$TYPEORM_PORT >> backend/.env
+            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> backend/.env
+            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> backend/.env
+            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> backend/.env
+            cat backend/.env  # check vals
+      - run:
+          name: Deploy backend with Ansible
+          command: |
+            cd backend
+            npm i
+            npm run build
+            cd ..
+            tar -C backend -czf artifact.tar.gz .
+            cd .circleci/ansible
+            echo "Contents  of the inventory.txt file is as below"
+            cat inventory.txt
+            ansible-playbook -i inventory.txt deploy-backend.yml
+
+#######################################
