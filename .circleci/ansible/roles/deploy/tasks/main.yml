@@ -1,26 +1,17 @@
 ---
-- name: create the backend directory
-  file:
-    path: ~/backend
-    state: directory
-    mode: 0755
+- name: Make sure backend files is moved to ec2 instance
+  copy:
+    src: /root/project/backend_artifact.tar.gz
+    dest: ~/home/ubuntu
 
-- name: get extracted artifact into backend
-  unarchive: 
-    src: ~/project/artifact.tar.gz
-    dest: ~/backend  
-    mode: 0755
-    owner: ubuntu
-    group: ubuntu
-
-
-- name: execute node
+- name: "install package dependencies"
   shell: |
-    cd backend
-    curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash -
-    sudo apt install -y nodejs
-    sudo npm install -g npm@latest
-    sudo npm install -g webpack-dev-server
-    sudo npm install
-    sudo npm run build
-    sudo pm2 start npm --name backend -- start
+    cd ~/home/ubuntu
+    tar -xzvf backend_artifact.tar.gz -C backend
+    rm backend_artifact.tar.gz
+    cd backend/
+    # npm install && npm run build
+    npm audit fix && npm run build
+    cd dist
+    echo `pwd` >> ansible-test.txt
+    pm2 start npm --name backend -- start
